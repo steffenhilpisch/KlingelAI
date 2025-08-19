@@ -54,10 +54,18 @@ An automated monitoring system for Fraunhofer IUK AI publications with economic 
 python KlingelAI.py
 ```
 
-### Test Mode (processes only first 10 publications)
+### Email Configuration Test
 ```bash
-python KlingelAI_test.py
+python test_email.py
 ```
+
+This diagnostic tool will:
+- ✅ Check all environment variables
+- 🌐 Test network connectivity to SMTP server
+- 📡 Verify SMTP server capabilities
+- 🔑 Test authentication with your credentials
+- 📧 Send a test email
+- 🔍 Provide detailed error diagnosis if anything fails
 
 ## 📊 Economic Keywords
 
@@ -70,8 +78,9 @@ The system filters publications based on a comprehensive list of economic keywor
 ## 📁 Files
 
 - `KlingelAI.py` - Main production script
-- `KlingelAI_test.py` - Test version (processes only first 10 publications)
-- `KlingelAI_fixed.py` - Full-featured version with detailed extraction
+- `test_email.py` - Email configuration diagnostic tool
+- `requirements.txt` - Python dependencies
+- `.env.example` - Configuration template
 - `known_links.txt` - Automatically generated file to track processed publications
 - `README.md` - This documentation
 
