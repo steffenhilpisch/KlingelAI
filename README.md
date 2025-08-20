@@ -38,14 +38,21 @@ An automated monitoring system for Fraunhofer IUK AI publications with economic 
    # Windows: Download from https://www.mozilla.org/firefox/
    ```
 
-3. **Configure Email Credentials** (set environment variables):
-   ```bash
-   export SENDER_EMAIL="your-email@example.com"
-   export SENDER_PASSWORD="your-password"
-   export RECIPIENT_EMAIL="recipient@example.com"
-   export SMTP_SERVER="your-smtp-server.com"  # Optional, defaults to owa.hs-ruhrwest.de
-   export SMTP_PORT="587"  # Optional, defaults to 587
+3. **Configure Email Credentials**:
+   
+   Edit the `EMAIL_CONFIG` dictionary at the top of both `KlingelAI.py` and `test_email.py`:
+   
+   ```python
+   EMAIL_CONFIG = {
+       'sender_email': 'your-email@hs-ruhrwest.de',  # Your HS-Ruhrwest email
+       'sender_password': 'your-app-specific-password',  # Your app-specific password
+       'recipient_email': 'recipient@example.com',  # Where to send notifications
+       'smtp_server': 'owa.hs-ruhrwest.de',
+       'smtp_port': 587
+   }
    ```
+   
+   **Important**: Use an **app-specific password**, not your regular email password.
 
 ## 🏃‍♂️ Usage
 
@@ -60,7 +67,7 @@ python test_email.py
 ```
 
 This diagnostic tool will:
-- ✅ Check all environment variables
+- ✅ Check email configuration in the script
 - 🌐 Test network connectivity to SMTP server
 - 📡 Verify SMTP server capabilities
 - 🔑 Test authentication with your credentials
@@ -77,10 +84,9 @@ The system filters publications based on a comprehensive list of economic keywor
 
 ## 📁 Files
 
-- `KlingelAI.py` - Main production script
-- `test_email.py` - Email configuration diagnostic tool
+- `KlingelAI.py` - Main production script (configure EMAIL_CONFIG at the top)
+- `test_email.py` - Email configuration diagnostic tool (configure EMAIL_CONFIG at the top)
 - `requirements.txt` - Python dependencies
-- `.env.example` - Configuration template
 - `known_links.txt` - Automatically generated file to track processed publications
 - `README.md` - This documentation
 

@@ -3,81 +3,67 @@
 Test email configuration for KlingelAI - Detailed Diagnostics
 """
 import smtplib
-import os
 import socket
 from email.mime.text import MIMEText
 
-def check_environment_variables():
-    """Check and report on all environment variables."""
-    print("🔍 Environment Variables Check")
+# EMAIL CONFIGURATION - UPDATE THESE VALUES
+EMAIL_CONFIG = {
+    'sender_email': 'your-email@hs-ruhrwest.de',  # Replace with your email
+    'sender_password': 'your-app-specific-password',  # Replace with your password
+    'recipient_email': 'recipient@example.com',  # Replace with recipient email
+    'smtp_server': 'owa.hs-ruhrwest.de',
+    'smtp_port': 587
+}
+
+def check_email_configuration():
+    """Check and report on email configuration."""
+    print("🔍 Email Configuration Check")
     print("=" * 50)
     
-    # Required variables
-    required_vars = {
-        'SENDER_EMAIL': 'Email address to send from',
-        'SENDER_PASSWORD': 'Password or app-specific password',
-        'RECIPIENT_EMAIL': 'Email address to send to'
-    }
+    config_issues = []
     
-    # Optional variables with defaults
-    optional_vars = {
-        'SMTP_SERVER': ('SMTP server hostname', 'owa.hs-ruhrwest.de'),
-        'SMTP_PORT': ('SMTP server port', '587')
-    }
+    # Check each configuration value
+    if EMAIL_CONFIG['sender_email'] == 'your-email@hs-ruhrwest.de':
+        print("❌ SENDER_EMAIL: NOT CONFIGURED (still default value)")
+        config_issues.append('sender_email')
+    else:
+        print(f"✅ SENDER_EMAIL: {EMAIL_CONFIG['sender_email']}")
     
-    missing_required = []
-    empty_required = []
+    if EMAIL_CONFIG['sender_password'] == 'your-app-specific-password':
+        print("❌ SENDER_PASSWORD: NOT CONFIGURED (still default value)")
+        config_issues.append('sender_password')
+    else:
+        password_display = '*' * min(len(EMAIL_CONFIG['sender_password']), 8)
+        print(f"✅ SENDER_PASSWORD: {password_display} ({len(EMAIL_CONFIG['sender_password'])} characters)")
     
-    # Check required variables
-    for var, description in required_vars.items():
-        value = os.getenv(var)
-        if value is None:
-            print(f"❌ {var}: NOT SET ({description})")
-            missing_required.append(var)
-        elif value.strip() == "":
-            print(f"⚠️  {var}: EMPTY ({description})")
-            empty_required.append(var)
-        else:
-            # Show partial value for security
-            if 'PASSWORD' in var:
-                display_value = f"{'*' * min(len(value), 8)} ({len(value)} characters)"
-            else:
-                display_value = value
-            print(f"✅ {var}: {display_value}")
+    if EMAIL_CONFIG['recipient_email'] == 'recipient@example.com':
+        print("❌ RECIPIENT_EMAIL: NOT CONFIGURED (still default value)")
+        config_issues.append('recipient_email')
+    else:
+        print(f"✅ RECIPIENT_EMAIL: {EMAIL_CONFIG['recipient_email']}")
     
-    print()
-    
-    # Check optional variables
-    print("📋 Optional Variables (with defaults)")
-    print("-" * 30)
-    for var, (description, default) in optional_vars.items():
-        value = os.getenv(var, default)
-        is_default = os.getenv(var) is None
-        status = "DEFAULT" if is_default else "SET"
-        print(f"{'🔧' if is_default else '✅'} {var}: {value} ({status})")
+    print(f"✅ SMTP_SERVER: {EMAIL_CONFIG['smtp_server']}")
+    print(f"✅ SMTP_PORT: {EMAIL_CONFIG['smtp_port']}")
     
     print()
     
     # Summary
-    if missing_required or empty_required:
+    if config_issues:
         print("❌ CONFIGURATION ISSUES FOUND:")
-        if missing_required:
-            print(f"   Missing variables: {', '.join(missing_required)}")
-        if empty_required:
-            print(f"   Empty variables: {', '.join(empty_required)}")
+        print(f"   Unconfigured values: {', '.join(config_issues)}")
         print()
-        print("🛠️  TO FIX, RUN THESE COMMANDS:")
-        for var in missing_required + empty_required:
-            if var == 'SENDER_EMAIL':
-                print(f"   export {var}='your-email@hs-ruhrwest.de'")
-            elif var == 'SENDER_PASSWORD':
-                print(f"   export {var}='your-app-specific-password'")
-            elif var == 'RECIPIENT_EMAIL':
-                print(f"   export {var}='recipient@example.com'")
+        print("🛠️  TO FIX:")
+        print("   1. Open this script in a text editor")
+        print("   2. Find the EMAIL_CONFIG dictionary at the top")
+        print("   3. Replace the default values with your actual credentials:")
+        print("      - sender_email: Your HS-Ruhrwest email address")
+        print("      - sender_password: Your app-specific password")
+        print("      - recipient_email: Where to send notifications")
+        print("   4. Save the file and run this test again")
         print()
         return False
     else:
-        print("✅ All required environment variables are set!")
+        print("✅ All email configuration values are set!")
         return True
 
 def test_network_connectivity(smtp_server, smtp_port):
@@ -237,19 +223,19 @@ def test_email_connection():
     print("=" * 60)
     print()
     
-    # Step 1: Check environment variables
-    if not check_environment_variables():
-        print("❌ CRITICAL: Fix environment variables before proceeding!")
+    # Step 1: Check email configuration
+    if not check_email_configuration():
+        print("❌ CRITICAL: Fix email configuration before proceeding!")
         return False
     
     print()
     
     # Get configuration
-    sender = os.getenv('SENDER_EMAIL')
-    password = os.getenv('SENDER_PASSWORD')
-    recipient = os.getenv('RECIPIENT_EMAIL')
-    smtp_server = os.getenv('SMTP_SERVER', 'owa.hs-ruhrwest.de')
-    smtp_port = int(os.getenv('SMTP_PORT', '587'))
+    sender = EMAIL_CONFIG['sender_email']
+    password = EMAIL_CONFIG['sender_password']
+    recipient = EMAIL_CONFIG['recipient_email']
+    smtp_server = EMAIL_CONFIG['smtp_server']
+    smtp_port = EMAIL_CONFIG['smtp_port']
     
     # Step 2: Test network connectivity
     if not test_network_connectivity(smtp_server, smtp_port):

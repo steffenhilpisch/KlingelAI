@@ -21,7 +21,6 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from webdriver_manager.firefox import GeckoDriverManager
-import os
 import time
 import logging
 
@@ -68,29 +67,37 @@ def has_economic_focus(title, abstract=""):
     matches = sum(1 for keyword in ECONOMIC_KEYWORDS if keyword.lower() in text_to_check)
     return matches > 0
 
-def send_email(subject, new_entries, sender_email=None, sender_password=None, recipient_email=None):
+# EMAIL CONFIGURATION - UPDATE THESE VALUES
+EMAIL_CONFIG = {
+    'sender_email': 'your-email@hs-ruhrwest.de',  # Replace with your email
+    'sender_password': 'your-app-specific-password',  # Replace with your password
+    'recipient_email': 'recipient@example.com',  # Replace with recipient email
+    'smtp_server': 'owa.hs-ruhrwest.de',
+    'smtp_port': 587
+}
+
+def send_email(subject, new_entries):
     """
     Send email with new economic publications.
     
     Args:
         subject (str): Email subject
         new_entries (list): List of publication dictionaries
-        sender_email (str): Sender email (optional, uses env var if not provided)
-        sender_password (str): Sender password (optional, uses env var if not provided)
-        recipient_email (str): Recipient email (optional, uses env var if not provided)
         
     Returns:
         bool: True if email sent successfully
     """
-    # Get email credentials from environment variables for security
-    sender = sender_email or os.getenv('SENDER_EMAIL')
-    password = sender_password or os.getenv('SENDER_PASSWORD')
-    recipient = recipient_email or os.getenv('RECIPIENT_EMAIL')
-    smtp_server = os.getenv('SMTP_SERVER', 'owa.hs-ruhrwest.de')
-    smtp_port = int(os.getenv('SMTP_PORT', '587'))
+    # Get email credentials from configuration
+    sender = EMAIL_CONFIG['sender_email']
+    password = EMAIL_CONFIG['sender_password']
+    recipient = EMAIL_CONFIG['recipient_email']
+    smtp_server = EMAIL_CONFIG['smtp_server']
+    smtp_port = EMAIL_CONFIG['smtp_port']
     
-    if not all([sender, password, recipient]):
-        logger.warning("Email credentials not provided. Set SENDER_EMAIL, SENDER_PASSWORD, and RECIPIENT_EMAIL environment variables.")
+    # Check if credentials are still default values
+    if sender == 'your-email@hs-ruhrwest.de' or password == 'your-app-specific-password':
+        logger.warning("Email credentials not configured! Please update EMAIL_CONFIG in the script.")
+        logger.warning("Set your actual email, password, and recipient in the EMAIL_CONFIG dictionary.")
         return False
 
     msg = MIMEMultipart("alternative")
